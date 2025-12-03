@@ -1,0 +1,873 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FYP - 25 - S4 - 30 - AI Traffic Intelligence</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="app">
+        <!-- Header -->
+        <header id="header">
+            <div class="logo">
+                <div class="logo-icon">
+                    FYP
+                </div>
+                <div>
+                    <div style="display: flex; align-items: baseline;">
+                        <span class="logo-text">Traffic Bottleneck Identification</span>
+                        <span class="logo-subtext"></span>
+                    </div>
+                    <div style="font-size: 11px; color: var(--medium-text); margin-top: 2px;">
+                        Real-time traffic intelligence - Singapore
+                    </div>
+                </div>
+            </div>
+            
+            <div class="header-controls">
+                <button class="header-btn" id="regional-stats-btn">
+                    <i class="fas fa-chart-bar"></i>
+                    Regional Stats
+                </button>
+                <button class="header-btn" id="report-incident-btn">
+                    <i class="fas fa-exclamation-circle"></i>
+                    Report Incident
+                </button>
+                <button class="header-btn">
+                    <i class="fas fa-cog"></i>
+                    Settings
+                </button>
+                <div class="user-avatar">
+                    AJ
+                </div>
+            </div>
+        </header>
+
+        <!-- Sidebar -->
+        <aside id="sidebar">
+            <div class="search-container">
+                <div class="search-box">
+                    <i class="fas fa-search search-icon"></i>
+                    <input type="text" class="search-input" placeholder="Search destination or address...">
+                </div>
+            </div>
+            
+            <div class="route-info">
+                <div class="route-summary">
+                    <div class="section-title">
+                        <i class="fas fa-route"></i>
+                        Route Summary
+                    </div>
+                    
+                    <div class="route-stats">
+                        <div class="stat-item">
+                            <span class="stat-label">Estimated Time</span>
+                            <span class="stat-value">24<span class="stat-unit">min</span></span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Distance</span>
+                            <span class="stat-value">13.2<span class="stat-unit">km</span></span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Traffic Impact</span>
+                            <span class="stat-value stat-highlight">+18<span class="stat-unit">min</span></span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Efficiency</span>
+                            <span class="stat-value">91<span class="stat-unit">%</span></span>
+                        </div>
+                    </div>
+                    
+                    <div class="route-actions">
+                        <button class="action-btn">
+                            <i class="fas fa-redo"></i>
+                            Recalculate
+                        </button>
+                        <button class="action-btn primary">
+                            <i class="fas fa-play"></i>
+                            Start Navigation
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Regional Statistics Section -->
+                <div class="regional-stats">
+                    <div class="section-title">
+                        <i class="fas fa-chart-bar"></i>
+                        Regional Statistics
+                    </div>
+                    
+                    <table class="stats-table">
+                        <thead>
+                            <tr>
+                                <th>Area</th>
+                                <th>Avg Speed</th>
+                                <th>Incidents</th>
+                                <th>Trend</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Central</td>
+                                <td>32 km/h</td>
+                                <td>4</td>
+                                <td class="trend-down">▼ 12%</td>
+                            </tr>
+                            <tr>
+                                <td>West</td>
+                                <td>45 km/h</td>
+                                <td>2</td>
+                                <td class="trend-up">▲ 8%</td>
+                            </tr>
+                            <tr>
+                                <td>East</td>
+                                <td>38 km/h</td>
+                                <td>3</td>
+                                <td class="trend-neutral">→ Stable</td>
+                            </tr>
+                            <tr>
+                                <td>North</td>
+                                <td>50 km/h</td>
+                                <td>1</td>
+                                <td class="trend-up">▲ 15%</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    
+                    <div class="mini-chart-container">
+                        <div class="section-title" style="margin-bottom: 10px; font-size: 12px;">
+                            <i class="fas fa-fire"></i>
+                            Congestion Levels by Region
+                        </div>
+                        <div class="chart-bars">
+                            <div class="chart-bar" style="height: 85%;" data-value="85% Central"></div>
+                            <div class="chart-bar" style="height: 65%;" data-value="65% West"></div>
+                            <div class="chart-bar" style="height: 72%;" data-value="72% East"></div>
+                            <div class="chart-bar" style="height: 55%;" data-value="55% North"></div>
+                        </div>
+                        <div class="chart-labels">
+                            <span>Central</span>
+                            <span>West</span>
+                            <span>East</span>
+                            <span>North</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="ai-predictions">
+                    <div class="section-title">
+                        <i class="fas fa-brain"></i>
+                        AI Predictions
+                    </div>
+                    
+                    <div class="prediction-item">
+                        <div class="prediction-label">
+                            <div class="prediction-icon">
+                                <i class="fas fa-clock"></i>
+                            </div>
+                            <div>
+                                <div style="font-size: 14px;">Peak Traffic Starts</div>
+                                <div style="font-size: 12px; color: var(--medium-text);">During rush hour</div>
+                            </div>
+                        </div>
+                        <div class="prediction-value">17:30</div>
+                    </div>
+                    
+                    <div class="prediction-item">
+                        <div class="prediction-label">
+                            <div class="prediction-icon">
+                                <i class="fas fa-car-crash"></i>
+                            </div>
+                            <div>
+                                <div style="font-size: 14px;">Accident Clearance</div>
+                                <div style="font-size: 12px; color: var(--medium-text);">Estimated time</div>
+                            </div>
+                        </div>
+                        <div class="prediction-value">25 min</div>
+                    </div>
+                    
+                    <div class="prediction-item">
+                        <div class="prediction-label">
+                            <div class="prediction-icon">
+                                <i class="fas fa-leaf"></i>
+                            </div>
+                            <div>
+                                <div style="font-size: 14px;">ERP Charges</div>
+                                <div style="font-size: 12px; color: var(--medium-text);">Next gantry</div>
+                            </div>
+                        </div>
+                        <div class="prediction-value">S$3.50</div>
+                    </div>
+                </div>
+                
+                <div class="traffic-legend">
+                    <div class="section-title">
+                        <i class="fas fa-fire"></i>
+                        Traffic Heatmap
+                    </div>
+                    
+                    <div class="legend-items">
+                        <div class="legend-item">
+                            <div class="legend-color" style="background: rgba(0, 243, 255, 0.2);"></div>
+                            <span class="legend-label">Light Traffic</span>
+                            <span class="legend-value">0-20%</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color" style="background: rgba(0, 243, 255, 0.5);"></div>
+                            <span class="legend-label">Moderate</span>
+                            <span class="legend-value">20-50%</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color" style="background: rgba(255, 179, 77, 0.6);"></div>
+                            <span class="legend-label">Heavy</span>
+                            <span class="legend-value">50-80%</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color" style="background: rgba(255, 55, 95, 0.8);"></div>
+                            <span class="legend-label">Gridlock</span>
+                            <span class="legend-value">80-100%</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Map Container -->
+        <main id="map-container">
+            <div id="map"></div>
+            
+            <div class="map-overlay">
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <div style="width: 12px; height: 12px; background: var(--primary); border-radius: 50%;"></div>
+                    <div>
+                        <div style="font-size: 12px; color: var(--medium-text);">Current Speed</div>
+                        <div style="font-size: 20px; font-weight: 600;">68 <span style="font-size: 14px; color: var(--medium-text);">km/h</span></div>
+                    </div>
+                </div>
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <div style="width: 12px; height: 12px; background: var(--secondary); border-radius: 50%;"></div>
+                    <div>
+                        <div style="font-size: 12px; color: var(--medium-text);">Avg. Traffic Speed</div>
+                        <div style="font-size: 20px; font-weight: 600;">45 <span style="font-size: 14px; color: var(--medium-text);">km/h</span></div>
+                    </div>
+                </div>
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <div style="width: 12px; height: 12px; background: var(--success); border-radius: 50%;"></div>
+                    <div>
+                        <div style="font-size: 12px; color: var(--medium-text);">Road Capacity</div>
+                        <div style="font-size: 20px; font-weight: 600;">72<span style="font-size: 14px; color: var(--medium-text);">%</span></div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="map-controls">
+                <button class="map-btn active" id="heatmap-toggle">
+                    <i class="fas fa-fire"></i>
+                </button>
+                <button class="map-btn" id="traffic-toggle">
+                    <i class="fas fa-car"></i>
+                </button>
+                <button class="map-btn" id="incidents-toggle">
+                    <i class="fas fa-exclamation-triangle"></i>
+                </button>
+                <button class="map-btn" id="locate-me">
+                    <i class="fas fa-location-arrow"></i>
+                </button>
+                <button class="map-btn" id="layers-toggle">
+                    <i class="fas fa-layer-group"></i>
+                </button>
+            </div>
+            
+            <!-- Map Report Button -->
+            <button class="map-report-btn" id="map-report-btn" title="Report Incident">
+                <i class="fas fa-plus"></i>
+            </button>
+            
+            <div class="incident-marker">
+                <i class="fas fa-car-crash incident-icon"></i>
+                <div>
+                    <div style="font-weight: 600; font-size: 14px;">Accident Reported</div>
+                    <div style="font-size: 12px; color: var(--medium-text);">CTE towards AYE, clearing in ~20 min</div>
+                </div>
+            </div>
+            
+            <div class="ai-insight">
+                <i class="fas fa-brain ai-icon"></i>
+                <div>
+                    <div style="font-weight: 600; font-size: 14px;">AI Insight</div>
+                    <div style="font-size: 12px; color: var(--light-text);">Use PIE instead of ECP - saves 15 minutes</div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Report Incident Modal -->
+        <div class="modal-overlay" id="incident-modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="modal-title">
+                        <i class="fas fa-exclamation-circle"></i>
+                        Report Road Incident
+                    </h3>
+                    <button class="close-modal" id="close-modal">&times;</button>
+                </div>
+                <form id="incident-form">
+                    <div class="form-group">
+                        <label class="form-label" for="incident-location">Location *</label>
+                        <input type="text" class="form-input" id="incident-location" placeholder="e.g., CTE Exit 5 towards AYE" required>
+                        <div class="form-error" id="location-error">Please enter a valid location</div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="incident-type">Incident Type *</label>
+                        <select class="form-select" id="incident-type" required>
+                            <option value="">Select type of incident</option>
+                            <option value="accident">Accident / Collision</option>
+                            <option value="breakdown">Vehicle Breakdown</option>
+                            <option value="roadwork">Road Works</option>
+                            <option value="hazard">Road Hazard</option>
+                            <option value="congestion">Heavy Congestion</option>
+                            <option value="flood">Flooding</option>
+                            <option value="other">Other</option>
+                        </select>
+                        <div class="form-error" id="type-error">Please select an incident type</div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="incident-severity">Severity Level</label>
+                        <select class="form-select" id="incident-severity">
+                            <option value="low">Low - Minor delay</option>
+                            <option value="medium" selected>Medium - Moderate delay</option>
+                            <option value="high">High - Major delay</option>
+                            <option value="critical">Critical - Road blocked</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="incident-description">Description</label>
+                        <textarea class="form-textarea" id="incident-description" 
+                                  placeholder="Provide more details (e.g., '3-car collision in left lane', 'Tree fallen across road')" 
+                                  rows="3"></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <div style="display: flex; align-items: center; gap: 10px; font-size: 12px; color: var(--medium-text);">
+                            <i class="fas fa-info-circle"></i>
+                            <span>Reports are verified by our system and shared with LTA for traffic management.</span>
+                        </div>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-secondary" id="cancel-report">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Submit Report</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Success Message -->
+        <div class="success-message" id="success-message">
+            <i class="fas fa-check-circle success-icon"></i>
+            <div>
+                <div style="font-weight: 600; font-size: 14px;">Report Submitted!</div>
+                <div style="font-size: 12px; color: var(--light-text);">Thank you for contributing to safer roads</div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/leaflet.heat@0.2.0/dist/leaflet-heat.min.js"></script>
+    <script>
+        // Initialize the map with Singapore coordinates
+        const map = L.map('map', {
+            center: [1.3521, 103.8198], // Singapore coordinates
+            zoom: 12,
+            zoomControl: false,
+            attributionControl: false,
+            fadeAnimation: true,
+            zoomAnimation: true
+        });
+
+        // Add dark map tiles - Using dark theme
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+            attribution: '© OpenStreetMap contributors, © CartoDB',
+            subdomains: 'abcd',
+            maxZoom: 19
+        }).addTo(map);
+
+        // Add zoom control with custom position
+        L.control.zoom({
+            position: 'bottomright'
+        }).addTo(map);
+
+        // Singapore traffic heatmap data
+        const generateHeatmapData = () => {
+            const center = [1.3521, 103.8198]; // Singapore center
+            const points = [];
+            
+            // Generate traffic congestion points around Singapore
+            for (let i = 0; i < 200; i++) {
+                const lat = center[0] + (Math.random() - 0.5) * 0.05;
+                const lng = center[1] + (Math.random() - 0.5) * 0.08;
+                const intensity = Math.random() * 0.8 + 0.2;
+                points.push([lat, lng, intensity]);
+            }
+            
+            // Add specific congested areas in Singapore
+            const congestedAreas = [
+                { center: [1.3000, 103.8550], radius: 0.006, intensity: 0.9 },  // Orchard Road area
+                { center: [1.2790, 103.8485], radius: 0.008, intensity: 0.95 }, // CBD/Raffles Place
+                { center: [1.2900, 103.7760], radius: 0.007, intensity: 0.85 }, // Jurong East
+                { center: [1.3400, 103.7000], radius: 0.005, intensity: 0.7 },  // Woodlands
+                { center: [1.3190, 103.8930], radius: 0.009, intensity: 0.92 },  // Paya Lebar/Eunos
+                { center: [1.3650, 103.9890], radius: 0.004, intensity: 0.8 }   // Changi Airport
+            ];
+            
+            congestedAreas.forEach(area => {
+                for (let i = 0; i < 40; i++) {
+                    const angle = Math.random() * 2 * Math.PI;
+                    const distance = Math.random() * area.radius;
+                    const lat = area.center[0] + Math.cos(angle) * distance;
+                    const lng = area.center[1] + Math.sin(angle) * distance;
+                    points.push([lat, lng, area.intensity * (0.8 + Math.random() * 0.2)]);
+                }
+            });
+            
+            return points;
+        };
+
+        // Create heatmap layer
+        const heatmapLayer = L.heatLayer(generateHeatmapData(), {
+            radius: 20,
+            blur: 12,
+            maxZoom: 17,
+            minOpacity: 0.3,
+            gradient: {
+                0.2: 'rgba(0, 243, 255, 0.2)',
+                0.5: 'rgba(0, 243, 255, 0.5)',
+                0.7: 'rgba(255, 179, 77, 0.6)',
+                1.0: 'rgba(255, 55, 95, 0.8)'
+            }
+        }).addTo(map);
+
+        // Singapore route example (Marina Bay Sands to Changi Airport)
+        const routeCoordinates = [
+            [1.2836, 103.8605],  // Marina Bay Sands
+            [1.2926, 103.8545],  // Suntec City
+            [1.3040, 103.8317],  // Orchard Road
+            [1.3194, 103.8426],  // Newton
+            [1.3343, 103.8550],  // Toa Payoh
+            [1.3522, 103.8678],  // Paya Lebar
+            [1.3574, 103.9876]   // Changi Airport Terminal 3
+        ];
+
+        const routeLine = L.polyline(routeCoordinates, {
+            color: 'var(--primary)',
+            weight: 4,
+            opacity: 0.8,
+            dashArray: '8, 8',
+            lineCap: 'round'
+        }).addTo(map);
+
+        // Add glow effect to route
+        const routeGlow = L.polyline(routeCoordinates, {
+            color: 'var(--primary)',
+            weight: 10,
+            opacity: 0.2,
+            lineCap: 'round'
+        }).addTo(map);
+
+        // Singapore traffic incidents
+        const incidents = [
+            { lat: 1.2900, lng: 103.8400, type: 'accident', severity: 'high', desc: 'Multi-vehicle collision' },
+            { lat: 1.3040, lng: 103.8317, type: 'construction', severity: 'medium', desc: 'Road maintenance' },
+            { lat: 1.2790, lng: 103.8485, type: 'congestion', severity: 'high', desc: 'Heavy peak hour traffic' },
+            { lat: 1.3343, lng: 103.8550, type: 'hazard', severity: 'low', desc: 'Debris on road' },
+            { lat: 1.3522, lng: 103.8678, type: 'congestion', severity: 'medium', desc: 'Lane closure' }
+        ];
+
+        const incidentMarkers = L.layerGroup();
+        
+        incidents.forEach(incident => {
+            const icon = L.divIcon({
+                html: `
+                    <div style="
+                        width: 24px;
+                        height: 24px;
+                        background: ${incident.severity === 'high' ? 'var(--danger)' : incident.severity === 'medium' ? 'var(--warning)' : 'var(--primary)'};
+                        border-radius: 50%;
+                        border: 2px solid white;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        color: white;
+                        font-size: 12px;
+                        box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+                    ">
+                        <i class="fas fa-${incident.type === 'accident' ? 'car-crash' : incident.type === 'construction' ? 'cone' : 'exclamation-triangle'}"></i>
+                    </div>
+                `,
+                className: 'incident-marker-icon',
+                iconSize: [24, 24]
+            });
+            
+            const marker = L.marker([incident.lat, incident.lng], { icon }).addTo(incidentMarkers);
+            
+            marker.bindPopup(`
+                <div style="
+                    background: var(--dark-card);
+                    border-radius: 8px;
+                    padding: 12px;
+                    color: var(--light-text);
+                    border: 1px solid rgba(0, 243, 255, 0.2);
+                    min-width: 200px;
+                ">
+                    <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+                        <div style="
+                            width: 24px;
+                            height: 24px;
+                            background: ${incident.severity === 'high' ? 'var(--danger)' : incident.severity === 'medium' ? 'var(--warning)' : 'var(--primary)'};
+                            border-radius: 50%;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            color: white;
+                            font-size: 12px;
+                        ">
+                            <i class="fas fa-${incident.type === 'accident' ? 'car-crash' : incident.type === 'construction' ? 'cone' : 'exclamation-triangle'}"></i>
+                        </div>
+                        <div style="font-weight: 600; font-size: 14px;">${incident.desc}</div>
+                    </div>
+                    <div style="font-size: 12px; color: var(--medium-text);">
+                        Severity: <span style="color: ${incident.severity === 'high' ? 'var(--danger)' : incident.severity === 'medium' ? 'var(--warning)' : 'var(--primary)'}">${incident.severity}</span>
+                    </div>
+                    <div style="font-size: 12px; color: var(--medium-text); margin-top: 4px;">
+                        Reported 10 min ago • Expected clearance: 25 min
+                    </div>
+                </div>
+            `);
+        });
+
+        // Map controls functionality
+        document.getElementById('heatmap-toggle').addEventListener('click', function() {
+            this.classList.toggle('active');
+            if (map.hasLayer(heatmapLayer)) {
+                map.removeLayer(heatmapLayer);
+            } else {
+                map.addLayer(heatmapLayer);
+            }
+        });
+
+        document.getElementById('traffic-toggle').addEventListener('click', function() {
+            this.classList.toggle('active');
+            if (map.hasLayer(incidentMarkers)) {
+                map.removeLayer(incidentMarkers);
+            } else {
+                map.addLayer(incidentMarkers);
+            }
+        });
+
+        document.getElementById('locate-me').addEventListener('click', function() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(position => {
+                    const { latitude, longitude } = position.coords;
+                    map.setView([latitude, longitude], 15);
+                    
+                    // Add user location marker
+                    const userIcon = L.divIcon({
+                        html: `
+                            <div style="
+                                width: 32px;
+                                height: 32px;
+                                background: var(--primary);
+                                border-radius: 50%;
+                                border: 3px solid white;
+                                display: flex;
+                                align-items: center;
+                                justify-content: center;
+                                color: var(--dark-bg);
+                                font-size: 14px;
+                                box-shadow: 0 0 20px var(--primary);
+                                animation: pulse 2s infinite;
+                            ">
+                                <i class="fas fa-location-arrow"></i>
+                            </div>
+                            <style>
+                                @keyframes pulse {
+                                    0% { box-shadow: 0 0 0 0 rgba(0, 243, 255, 0.7); }
+                                    70% { box-shadow: 0 0 0 10px rgba(0, 243, 255, 0); }
+                                    100% { box-shadow: 0 0 0 0 rgba(0, 243, 255, 0); }
+                                }
+                            </style>
+                        `,
+                        className: 'user-location-marker',
+                        iconSize: [32, 32]
+                    });
+                    
+                    L.marker([latitude, longitude], { icon: userIcon })
+                        .addTo(map)
+                        .bindPopup('Your Location')
+                        .openPopup();
+                });
+            } else {
+                alert("Geolocation is not supported by this browser.");
+            }
+        });
+
+        // Search functionality for Singapore
+        document.querySelector('.search-input').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter' && this.value.trim()) {
+                // Simulate search
+                const aiInsight = document.querySelector('.ai-insight');
+                aiInsight.innerHTML = `
+                    <i class="fas fa-brain ai-icon"></i>
+                    <div>
+                        <div style="font-weight: 600; font-size: 14px;">Searching...</div>
+                        <div style="font-size: 12px; color: var(--light-text);">Finding optimal route in Singapore to "${this.value}"</div>
+                    </div>
+                `;
+                aiInsight.style.display = 'flex';
+                
+                setTimeout(() => {
+                    aiInsight.innerHTML = `
+                        <i class="fas fa-brain ai-icon"></i>
+                        <div>
+                            <div style="font-weight: 600; font-size: 14px;">AI Route Found</div>
+                            <div style="font-size: 12px; color: var(--light-text);">Saved 12 minutes, avoided ERP charges</div>
+                        </div>
+                    `;
+                    
+                    // Update route stats
+                    document.querySelectorAll('.stat-value')[0].innerHTML = '22<span class="stat-unit">min</span>';
+                    document.querySelectorAll('.stat-value')[1].innerHTML = '14.6<span class="stat-unit">km</span>';
+                    document.querySelectorAll('.stat-value')[2].innerHTML = '<span class="stat-highlight">+10<span class="stat-unit">min</span></span>';
+                }, 1500);
+            }
+        });
+
+        // Incident Report Functionality
+        const incidentModal = document.getElementById('incident-modal');
+        const reportIncidentBtn = document.getElementById('report-incident-btn');
+        const mapReportBtn = document.getElementById('map-report-btn');
+        const closeModalBtn = document.getElementById('close-modal');
+        const cancelReportBtn = document.getElementById('cancel-report');
+        const incidentForm = document.getElementById('incident-form');
+        const successMessage = document.getElementById('success-message');
+
+        // Open modal from header button
+        reportIncidentBtn.addEventListener('click', () => {
+            incidentModal.style.display = 'flex';
+        });
+
+        // Open modal from map button
+        mapReportBtn.addEventListener('click', () => {
+            incidentModal.style.display = 'flex';
+        });
+
+        // Close modal
+        const closeModal = () => {
+            incidentModal.style.display = 'none';
+            incidentForm.reset();
+            // Clear errors
+            document.querySelectorAll('.form-error').forEach(error => {
+                error.style.display = 'none';
+            });
+        };
+
+        closeModalBtn.addEventListener('click', closeModal);
+        cancelReportBtn.addEventListener('click', closeModal);
+
+        // Close modal when clicking outside
+        incidentModal.addEventListener('click', (e) => {
+            if (e.target === incidentModal) {
+                closeModal();
+            }
+        });
+
+        // Form validation and submission
+        incidentForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            const location = document.getElementById('incident-location').value.trim();
+            const type = document.getElementById('incident-type').value;
+            const locationError = document.getElementById('location-error');
+            const typeError = document.getElementById('type-error');
+            
+            let isValid = true;
+            
+            // Validate location
+            if (!location) {
+                locationError.style.display = 'block';
+                isValid = false;
+            } else {
+                locationError.style.display = 'none';
+            }
+            
+            // Validate type
+            if (!type) {
+                typeError.style.display = 'block';
+                isValid = false;
+            } else {
+                typeError.style.display = 'none';
+            }
+            
+            if (!isValid) return;
+            
+            // Simulate storing report
+            const reportData = {
+                location: location,
+                type: type,
+                severity: document.getElementById('incident-severity').value,
+                description: document.getElementById('incident-description').value,
+                timestamp: new Date().toISOString(),
+                status: 'pending'
+            };
+            
+            console.log('Report submitted:', reportData);
+            
+            // Show success message
+            successMessage.classList.add('show');
+            
+            // Update regional statistics
+            const statsTable = document.querySelector('.stats-table tbody');
+            const centralRow = statsTable.rows[0];
+            const currentIncidents = parseInt(centralRow.cells[2].textContent);
+            centralRow.cells[2].textContent = currentIncidents + 1;
+            centralRow.cells[3].className = 'trend-down';
+            centralRow.cells[3].textContent = '▲ New report';
+            
+            // Close modal after delay
+            setTimeout(() => {
+                closeModal();
+                // Hide success message after 3 seconds
+                setTimeout(() => {
+                    successMessage.classList.remove('show');
+                }, 3000);
+            }, 1000);
+            
+            // Add a new incident marker to the map (simulated)
+            const newLat = 1.3521 + (Math.random() - 0.5) * 0.02;
+            const newLng = 103.8198 + (Math.random() - 0.5) * 0.03;
+            
+            const newIcon = L.divIcon({
+                html: `
+                    <div style="
+                        width: 28px;
+                        height: 28px;
+                        background: var(--warning);
+                        border-radius: 50%;
+                        border: 2px solid white;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        color: white;
+                        font-size: 12px;
+                        box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+                        animation: pulse 1s infinite;
+                    ">
+                        <i class="fas fa-exclamation"></i>
+                    </div>
+                `,
+                className: 'new-incident-marker',
+                iconSize: [28, 28]
+            });
+            
+            const newMarker = L.marker([newLat, newLng], { icon: newIcon }).addTo(incidentMarkers);
+            newMarker.bindPopup(`
+                <div style="
+                    background: var(--dark-card);
+                    border-radius: 8px;
+                    padding: 12px;
+                    color: var(--light-text);
+                    border: 1px solid rgba(0, 243, 255, 0.2);
+                    min-width: 200px;
+                ">
+                    <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+                        <div style="
+                            width: 24px;
+                            height: 24px;
+                            background: var(--warning);
+                            border-radius: 50%;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            color: white;
+                            font-size: 12px;
+                        ">
+                            <i class="fas fa-exclamation"></i>
+                        </div>
+                        <div style="font-weight: 600; font-size: 14px;">User Report: ${reportData.type}</div>
+                    </div>
+                    <div style="font-size: 12px; color: var(--medium-text);">
+                        Location: ${reportData.location}
+                    </div>
+                    <div style="font-size: 12px; color: var(--medium-text); margin-top: 4px;">
+                        Reported just now • Awaiting verification
+                    </div>
+                </div>
+            `);
+        });
+
+        // Regional Statistics Button - Scroll to statistics
+        document.getElementById('regional-stats-btn').addEventListener('click', () => {
+            const sidebar = document.querySelector('.route-info');
+            const statsSection = document.querySelector('.regional-stats');
+            statsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            
+            // Highlight the section briefly
+            statsSection.style.boxShadow = '0 0 0 3px rgba(0, 243, 255, 0.3)';
+            setTimeout(() => {
+                statsSection.style.boxShadow = 'none';
+            }, 1500);
+        });
+
+        // Simulate real-time traffic updates for Singapore
+        setInterval(() => {
+            // Update heatmap with new data
+            const newData = generateHeatmapData();
+            heatmapLayer.setLatLngs(newData);
+            
+            // Update stats randomly
+            const timeElement = document.querySelectorAll('.stat-value')[0];
+            const currentTime = parseInt(timeElement.textContent);
+            const newTime = Math.max(20, Math.min(50, currentTime + (Math.random() * 4 - 2)));
+            timeElement.innerHTML = `${Math.round(newTime)}<span class="stat-unit">min</span>`;
+            
+            // Update regional statistics chart bars randomly
+            const chartBars = document.querySelectorAll('.chart-bar');
+            chartBars.forEach((bar, index) => {
+                const currentHeight = parseFloat(bar.style.height);
+                const newHeight = Math.max(30, Math.min(95, currentHeight + (Math.random() * 20 - 10)));
+                bar.style.height = `${newHeight}%`;
+                bar.setAttribute('data-value', `${Math.round(newHeight)}%`);
+            });
+            
+            // Show update notification
+            const aiInsight = document.querySelector('.ai-insight');
+            if (Math.random() > 0.7) {
+                aiInsight.innerHTML = `
+                    <i class="fas fa-sync-alt ai-icon"></i>
+                    <div>
+                        <div style="font-weight: 600; font-size: 14px;">Traffic Updated</div>
+                        <div style="font-size: 12px; color: var(--light-text);">Singapore traffic patterns updated</div>
+                    </div>
+                `;
+                aiInsight.style.display = 'flex';
+                
+                setTimeout(() => {
+                    aiInsight.style.display = 'none';
+                }, 3000);
+            }
+        }, 10000);
+    </script>
+</body>
+</html>
+
+    <div class="legend-item">
+                            <div class="legend-color"   
+                            style="background: rgba(0, 243, 255, 0.2);"></div>
+                            <span class="legend-label">     Light</span>
+                            <span class="legend-value">0-20%</span>
+                        </div>  
